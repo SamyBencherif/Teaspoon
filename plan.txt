@@ -1,0 +1,83 @@
+
+// client
+
+cat x y :
+i = 0
+while :
+c = get y i
+add x c
+i = sum i 1
+ly = len y
+ifLess i ly while
+ret x
+
+hello a :
+msg = "hello"
+% this is a comment
+cat msg " "
+cat msg a
+print msg
+ret
+
+main :
+c = 0
+while :
+p = sum c 49
+hello [p]
+c = sum c 1
+ifEq c 10 skip
+ifEq 0 0 while
+skip :
+ret
+
+// mandate
+
+in order for this language to be usable the following functions must be defined
+
+ifEq  : to while, skip, end
+ifLess
+
+sum
+mul
+call
+
+get
+set //for arrays
+add
+len
+
+get a 0
+
+
+(some kind of IO)
+print, input
+
+// host (pseudo code)
+
+def eval(line):
+	tokens = line.split()
+	name = tokens[0]
+	args = tokens[1:]
+
+	if name == "print":
+	    print args[0]
+		return;
+	if name == "cat":
+		return args[0]+args[1];
+	// implement whatever functions you want
+
+def exec(src, func, args):
+	find "func ...:"
+	argNames = ["a"] // from find
+	argValues = ["world"] // from args param
+	localNames = []
+	localValues = []
+	step
+	if assign
+		localNames.add line.split("=")[0].strip)()
+		localValues.add eval(line.split("=")[1].strip)
+	else
+		eval(line)
+
+
+exec(src, "hello", ["world"])
