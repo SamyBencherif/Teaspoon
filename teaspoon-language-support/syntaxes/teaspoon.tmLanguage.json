@@ -1,0 +1,54 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Teaspoon",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.teaspoon",
+					"match": "\\b(ifLess|ifEq|ret)\\b"
+				},
+				{
+					"name": "constant.numeric.teaspoon",
+					"match": "\\b(-?\\d+\\.?\\d*)\\b"
+				},
+				{
+					"name": "constant.other.allcaps.teaspoon",
+					"match": "(while :)"
+				},
+				{
+					"name": "constant.other.allcaps.teaspoon",
+					"match": "(skip :)"
+				},
+				{
+					"name": "constant.other.allcaps.teaspoon",
+					"match": "(end :)"
+				},
+				{
+					"name": "entity.name.function.teaspoon",
+					"match": "(\\w+\\s:)"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.teaspoon",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.teaspoon",
+					"match": "\\\\."
+				}
+			]
+		}
+	},
+	"scopeName": "source.teaspoon"
+}

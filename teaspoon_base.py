@@ -2,9 +2,11 @@
 
 import sys
 
-src = open(sys.argv[1], 'r+t').read()
-
 VERBOSE = 0
+
+VERSION = ["base"]
+
+EXTENSIONS = {}
 
 def verbose(info):
 	if VERBOSE:
@@ -45,7 +47,9 @@ def eval(line, src, scopeNames, scopeValues):
 		return k
 
 	if line[0] in "-.0123456789":
-		if '.' in line:
+		if line[0]=="-" and line[1] != "-.0123456789":
+			return -eval(line[1:], src, scopeNames, scopeValues)
+		elif '.' in line:
 			return float(line)
 		else:
 			return int(line)
@@ -61,14 +65,24 @@ def eval(line, src, scopeNames, scopeValues):
 	if name == "print":
 		print(''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
 		return;
+	elif name == "require":
+		if ''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)]) != VERSION[0]:
+			print(VERSION[0], args[0])
+			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)])))
+			exit(1)
 	elif name == "get":
 		return eval(args[0], src, scopeNames, scopeValues)[eval(args[1], src, scopeNames, scopeValues)]
 	elif name == "add":
 		return eval(args[0], src, scopeNames, scopeValues).append(eval(args[1], src, scopeNames, scopeValues))
 	elif name == "sum":
 		return sum([eval(arg, src, scopeNames, scopeValues) for arg in args])
+	elif name == "mul":
+		return eval(args[0], src, scopeNames, scopeValues) * eval(args[1], src, scopeNames, scopeValues)
 	elif name == "len":
 		return len(eval(args[0], src, scopeNames, scopeValues))
+	# extensions
+	elif name in EXTENSIONS.keys():
+		return EXTENSIONS[name](*[eval(arg, src, scopeNames, scopeValues) for arg in args])
 	# user defined
 	else:
 		verbose ('user func {}'.format(name))
@@ -154,7 +168,7 @@ def exec(src, func, args):
 			else:
 				dest = args[2]
 			if (dest=="end") ^ (eval(args[0], src, argNames+localNames, argValues+localValues) == eval(args[1], src, argNames+localNames, argValues+localValues)):
-				while argParse(srcArr[currLine])[0] != dest:
+				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
 		elif tokens[0] == "ifLess":
@@ -165,11 +179,13 @@ def exec(src, func, args):
 			else:
 				dest = args[2]
 			if (dest=="end") ^ (eval(args[0], src, argNames+localNames, argValues+localValues) < eval(args[1], src, argNames+localNames, argValues+localValues)):
-				while argParse(srcArr[currLine])[0] != dest:
+				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
 		else: # arbitrary function call
 			verbose("root function call {{{}}}".format(srcArr[currLine]))
 			eval(srcArr[currLine], src, argNames+localNames, argValues+localValues)
 
-exec(src, "main", [])
+if __name__ == "__main__":
+	src = open(sys.argv[1], 'r+t').read()
+	exec(src, "main", [])

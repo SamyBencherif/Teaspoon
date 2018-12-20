@@ -1,0 +1,36 @@
+{
+    "name": "teaspoon-language-support",
+    "displayName": "Teaspoon Language Support",
+    "description": "Basic Teaspoon Language Features (code highlighting)",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.30.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "teaspoon",
+                "aliases": [
+                    "Teaspoon",
+                    "teaspoon"
+                ],
+                "extensions": [
+                    ".tea",
+                    ".tspn",
+                    ".teaspoon"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "teaspoon",
+                "scopeName": "source.teaspoon",
+                "path": "./syntaxes/teaspoon.tmLanguage.json"
+            }
+        ]
+    }
+}

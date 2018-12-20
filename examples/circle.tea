@@ -1,0 +1,41 @@
+
+main :
+require "graphics"
+initWindow 450 300
+
+speedX = 2
+speedY = 2
+
+posX = 225
+posY = 150
+
+while :
+posX = sum posX speedX
+posY = sum posY speedY
+
+ifLess posX 400 skip
+ifEq posX 400 skip
+speedX = -speedX
+skip :
+
+ifLess posX 50
+speedX = -speedX
+end :
+
+ifLess posY 250 skip
+ifEq posY 250 skip
+speedY = -speedY
+skip :
+
+ifLess posY 50
+speedY = -speedY
+end :
+
+drawCircle posX posY 50
+
+ev = getEvent
+ifEq ev 12 skip
+ifEq 0 0 while
+skip :
+
+ret
