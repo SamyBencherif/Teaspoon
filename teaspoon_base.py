@@ -79,7 +79,7 @@ def resolve(line, src, scopeNames, scopeValues):
 		return;
 	elif name == "require":
 		if ''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)]) != VERSION[0]:
-			print(VERSION[0], args[0])
+			# print(VERSION[0], args[0])
 			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
 			exit(1)
 	elif name == "get":
