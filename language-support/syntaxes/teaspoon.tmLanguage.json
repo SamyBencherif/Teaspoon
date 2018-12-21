@@ -22,19 +22,12 @@
 				},
 				{
 					"name": "constant.other.allcaps.teaspoon",
-					"match": "(while :|skip :)"
-				},
-				{
-					"name": "constant.other.allcaps.teaspoon",
-					"match": "(end :)"
-				},
-				{
-					"name": "constant.other.allcaps.teaspoon",
-					"match": "(end :)"
+					"match": "(while :)|(skip :)|(end :)"
 				},
 				{
 					"name": "entity.name.function.teaspoon",
-					"match": "([\\w\\s]*:)"
+					"match": "(\\w+\\s:)",
+					"%%comment%%": "([\\w\\s]+:)"
 				},
 				{
 					"name": "comment.teaspoon",
