@@ -19,7 +19,7 @@ def argParse(line):
 	k = []
 	inQuotes = 0
 	acc = ""
-	for i in line:
+	for i in line.strip():
 		if i=='"':
 			inQuotes = ~inQuotes
 		if ~inQuotes and i==" ":
@@ -31,13 +31,13 @@ def argParse(line):
 
 	return k
 
-def eval(line, src, scopeNames, scopeValues):
-	verbose('eval {} with scope {} : {}'.format(line, scopeNames, scopeValues))
+def resolve(line, src, scopeNames, scopeValues):
+	verbose('resolve {} with scope {} : {}'.format(line, scopeNames, scopeValues))
 
 	if line[0]=='[':
 		k = []
 		for i in argParse(line[1:-1].replace(', ', ' ').replace(',', ' ')):
-			k.append(eval(i, src, scopeNames, scopeValues))
+			k.append(resolve(i, src, scopeNames, scopeValues))
 		return k
 
 	if line[0]=='"':
@@ -48,7 +48,7 @@ def eval(line, src, scopeNames, scopeValues):
 
 	if line[0] in "-.0123456789":
 		if line[0]=="-" and line[1] != "-.0123456789":
-			return -eval(line[1:], src, scopeNames, scopeValues)
+			return -resolve(line[1:], src, scopeNames, scopeValues)
 		elif '.' in line:
 			return float(line)
 		else:
@@ -63,34 +63,34 @@ def eval(line, src, scopeNames, scopeValues):
 
 	# builtins
 	if name == "print":
-		print(''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
+		print(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
 		return;
 	elif name == "require":
-		if ''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)]) != VERSION[0]:
+		if ''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)]) != VERSION[0]:
 			print(VERSION[0], args[0])
-			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in eval(args[0], src, scopeNames, scopeValues)])))
+			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
 			exit(1)
 	elif name == "get":
-		return eval(args[0], src, scopeNames, scopeValues)[eval(args[1], src, scopeNames, scopeValues)]
+		return resolve(args[0], src, scopeNames, scopeValues)[resolve(args[1], src, scopeNames, scopeValues)]
 	elif name == "add":
-		return eval(args[0], src, scopeNames, scopeValues).append(eval(args[1], src, scopeNames, scopeValues))
+		return resolve(args[0], src, scopeNames, scopeValues).append(resolve(args[1], src, scopeNames, scopeValues))
 	elif name == "sum":
-		return sum([eval(arg, src, scopeNames, scopeValues) for arg in args])
+		return sum([resolve(arg, src, scopeNames, scopeValues) for arg in args])
 	elif name == "mul":
-		return eval(args[0], src, scopeNames, scopeValues) * eval(args[1], src, scopeNames, scopeValues)
+		return resolve(args[0], src, scopeNames, scopeValues) * resolve(args[1], src, scopeNames, scopeValues)
 	elif name == "len":
-		return len(eval(args[0], src, scopeNames, scopeValues))
+		return len(resolve(args[0], src, scopeNames, scopeValues))
 	# extensions
 	elif name in EXTENSIONS.keys():
-		return EXTENSIONS[name](*[eval(arg, src, scopeNames, scopeValues) for arg in args])
+		return EXTENSIONS[name](*[resolve(arg, src, scopeNames, scopeValues) for arg in args])
 	# user defined
 	else:
 		verbose ('user func {}'.format(name))
-		exec(src, name, [eval(arg, src, scopeNames, scopeValues) for arg in args])
+		call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
 
-def exec(src, func, args):
+def call(src, func, args):
 
-	verbose('exec {} with args {}'.format(func, args))
+	verbose('call {} with args {}'.format(func, args))
 
 	currLine = 0
 
@@ -144,11 +144,11 @@ def exec(src, func, args):
 			name = tokens[0].strip()
 			value = ' '.join(tokens[2:])
 			if name in localNames:
-				localValues[localNames.index(name)] = eval(value, src, argNames+localNames, argValues+localValues)
+				localValues[localNames.index(name)] = resolve(value, src, argNames+localNames, argValues+localValues)
 			else:
 				verbose('initializing {}'.format(name))
 				verbose('scope {}'.format(argNames))
-				localValues.append(eval(value, src, argNames+localNames, argValues+localValues))
+				localValues.append(resolve(value, src, argNames+localNames, argValues+localValues))
 				localNames.append(name)
 
 		# returns
@@ -157,7 +157,7 @@ def exec(src, func, args):
 			if len(tokens) == 1:
 				return None
 			else:
-				return eval(tokens[1], src, argNames+localNames, argValues+localValues)
+				return resolve(tokens[1], src, argNames+localNames, argValues+localValues)
 
 		# control structures
 		elif tokens[0] == "ifEq":
@@ -167,7 +167,7 @@ def exec(src, func, args):
 				dest = "end"
 			else:
 				dest = args[2]
-			if (dest=="end") ^ (eval(args[0], src, argNames+localNames, argValues+localValues) == eval(args[1], src, argNames+localNames, argValues+localValues)):
+			if (dest=="end") ^ (resolve(args[0], src, argNames+localNames, argValues+localValues) == resolve(args[1], src, argNames+localNames, argValues+localValues)):
 				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
@@ -178,14 +178,14 @@ def exec(src, func, args):
 				dest = "end"
 			else:
 				dest = args[2]
-			if (dest=="end") ^ (eval(args[0], src, argNames+localNames, argValues+localValues) < eval(args[1], src, argNames+localNames, argValues+localValues)):
+			if (dest=="end") ^ (resolve(args[0], src, argNames+localNames, argValues+localValues) < resolve(args[1], src, argNames+localNames, argValues+localValues)):
 				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
 		else: # arbitrary function call
 			verbose("root function call {{{}}}".format(srcArr[currLine]))
-			eval(srcArr[currLine], src, argNames+localNames, argValues+localValues)
+			resolve(srcArr[currLine], src, argNames+localNames, argValues+localValues)
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	exec(src, "main", [])
+	call(src, "main", [])

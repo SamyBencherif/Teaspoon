@@ -14,7 +14,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.teaspoon",
-					"match": "\\b(ifLess|ifEq|ret)\\b"
+					"match": "\\b(len|add|set|get|mul|sum|print|ifLess|ifEq|ret)\\b"
 				},
 				{
 					"name": "constant.numeric.teaspoon",
@@ -22,11 +22,11 @@
 				},
 				{
 					"name": "constant.other.allcaps.teaspoon",
-					"match": "(while :)"
+					"match": "(while :|skip :)"
 				},
 				{
 					"name": "constant.other.allcaps.teaspoon",
-					"match": "(skip :)"
+					"match": "(end :)"
 				},
 				{
 					"name": "constant.other.allcaps.teaspoon",
@@ -34,7 +34,11 @@
 				},
 				{
 					"name": "entity.name.function.teaspoon",
-					"match": "(\\w+\\s:)"
+					"match": "([\\w\\s]*:)"
+				},
+				{
+					"name": "comment.teaspoon",
+					"match": "(%.*)"
 				}
 			]
 		},

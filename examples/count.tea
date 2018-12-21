@@ -1,31 +1,32 @@
 cat x y :
-i = 0
-while :
-c = get y i
-add x c
-i = sum i 1
-ly = len y
-ifLess i ly while
-ret x
+	i = 0
+	while :
+	c = get y i
+	add x c
+	i = sum i 1
+	ly = len y
+	ifLess i ly while
+	ret x
 
 hello a :
-msg = "hello"
-% this is a comment
-cat msg " "
-cat msg a
-print msg
-ret
+	msg = "hello"
+	% this is a comment
+	cat msg " "
+	cat msg a
+	print msg
+	ret
 
 main :
-c = 0
-while :
-p = sum c 48
-hello [p]
-c = sum c 1
-ifEq c 10 skip
-ifEq 0 0 while
-skip :
-ifEq c 10
-print "That was cool!"
-end :
-ret
+	c = 0
+	while :
+		p = sum c 48
+		hello [p]
+		c = sum c 1
+		ifEq c 10 skip
+	ifEq 0 0 while
+
+	skip :
+	ifEq c 10
+	print "That was cool!"
+	end :
+	ret

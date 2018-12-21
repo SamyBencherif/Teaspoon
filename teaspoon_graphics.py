@@ -17,30 +17,30 @@ def initWindow(w=320, h=240, title='Teaspoon Game (powered by PyGame)'):
 
 	pygame.display.set_caption(title)
 
-def drawCircle(x, y, r):
+def drawCircle(x, y, radius, r=255, g=255, b=255):
 
 	global screen
 	black = 0, 0, 0
 
 	screen.fill(black)
 
-	pygame.draw.circle(screen, (255,0,0), (x,y), r)
+	pygame.draw.circle(screen, (r, g, b),  (x, y), radius)
 	# screen.blit(ball, pygame.Rect(x,y,100,100))
 
 	pygame.display.flip()
 
 
+
 def getEvent():
 	event = pygame.event.poll()
-	return event.type
+	return [event.type, event.key if 'key' in event.__dict__.keys() else None, event.button if 'button' in event.__dict__.keys() else None]
 
 EXTENSIONS.update({
 	'initWindow': initWindow,
-	'drawBall': drawBall,
 	'drawCircle': drawCircle,
 	'getEvent': getEvent
 })
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	exec(src, "main", [])
+	call(src, "main", [])
