@@ -3,6 +3,13 @@
 import sys
 
 VERBOSE = 0
+STEP = 0
+
+RED     = "\033[31m"
+GREEN   = "\033[32m"
+BLUE    = "\033[34m"
+YELLOW  = "\033[36m"
+DEFAULT = "\033[0m"
 
 VERSION = ["base"]
 
@@ -11,6 +18,11 @@ EXTENSIONS = {}
 def verbose(info):
 	if VERBOSE:
 		print (info)
+
+def logLine(line, scope):
+	if STEP:
+		if input (YELLOW + line + DEFAULT):
+			print(BLUE + scope + DEFAULT)
 
 def argParse(line):
 	if line.strip() == "":
@@ -122,15 +134,18 @@ def call(src, func, args):
 
 	#TODO: arg and local scope don't need to be seperate
 
-	argNames = tokens[1:-1]
-	argValues = args
+	# argNames = tokens[1:-1]
+	# argValues = args
 
-	localNames = []
-	localValues = []
+	localNames = tokens[1:-1]
+	localValues = args
 
+	logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 	# step
 	while currLine < retLoc:
+
+
 		currLine += 1
 
 		tokens = argParse(srcArr[currLine])
@@ -138,17 +153,18 @@ def call(src, func, args):
 		# no execute
 		if len(tokens) == 0 or tokens[0]=="%" or tokens[-1]==":":
 			continue
+		logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 		# assignment
-		elif len(tokens) >= 2 and tokens[1] == "=":
+		if len(tokens) >= 2 and tokens[1] == "=":
 			name = tokens[0].strip()
 			value = ' '.join(tokens[2:])
 			if name in localNames:
-				localValues[localNames.index(name)] = resolve(value, src, argNames+localNames, argValues+localValues)
+				localValues[localNames.index(name)] = resolve(value, src, localNames, localValues)
 			else:
 				verbose('initializing {}'.format(name))
-				verbose('scope {}'.format(argNames))
-				localValues.append(resolve(value, src, argNames+localNames, argValues+localValues))
+				verbose('scope {}'.format(localNames))
+				localValues.append(resolve(value, src, localNames, localValues))
 				localNames.append(name)
 
 		# returns
@@ -157,7 +173,7 @@ def call(src, func, args):
 			if len(tokens) == 1:
 				return None
 			else:
-				return resolve(tokens[1], src, argNames+localNames, argValues+localValues)
+				return resolve(tokens[1], src, localNames, localValues)
 
 		# control structures
 		elif tokens[0] == "ifEq":
@@ -167,7 +183,7 @@ def call(src, func, args):
 				dest = "end"
 			else:
 				dest = args[2]
-			if (dest=="end") ^ (resolve(args[0], src, argNames+localNames, argValues+localValues) == resolve(args[1], src, argNames+localNames, argValues+localValues)):
+			if (dest=="end") ^ (resolve(args[0], src, localNames, localValues) == resolve(args[1], src, localNames, localValues)):
 				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
@@ -178,13 +194,13 @@ def call(src, func, args):
 				dest = "end"
 			else:
 				dest = args[2]
-			if (dest=="end") ^ (resolve(args[0], src, argNames+localNames, argValues+localValues) < resolve(args[1], src, argNames+localNames, argValues+localValues)):
+			if (dest=="end") ^ (resolve(args[0], src, localNames, localValues) < resolve(args[1], src, localNames, localValues)):
 				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
 					currLine += -1 if dest=="while" else 1
 
 		else: # arbitrary function call
 			verbose("root function call {{{}}}".format(srcArr[currLine]))
-			resolve(srcArr[currLine], src, argNames+localNames, argValues+localValues)
+			resolve(srcArr[currLine], src, localNames, localValues)
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
