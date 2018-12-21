@@ -1,8 +1,9 @@
 
 
 init :
+	require "base"
 	require "graphics"
-	initWindow 450 300
+	% initWindow 450 300
 
 	speedX = 2
 	speedY = 2
@@ -38,15 +39,17 @@ physics :
 ret
 
 events :
-	ev = getEvent
-	evCode = get ev 0
-	evKey = get ev 1
+	% ev = getEvent
+	% evCode = get ev 0
+	% evKey = get ev 1
+	evCode = 0
+	evKey = 0
 
 	% key down
 	ifEq evCode 2
-	% keycode = k
-	ifEq evKey 107
-		clk = 0
+		% keycode = k
+		ifEq evKey 107
+			clk = 0
 	end :
 
 	% key up
@@ -63,7 +66,7 @@ events :
 ret
 
 render :
-	drawCircle posX posY 50 255 clk clk
+	% drawCircle posX posY 50 255 clk clk
 ret
 
 gameloop :

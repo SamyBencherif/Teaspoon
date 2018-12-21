@@ -3,7 +3,7 @@
 from teaspoon_base import *
 import sys, pygame
 
-VERSION[0] = "graphics"
+VERSION.append("graphics")
 
 def initWindow(w=320, h=240, title='Teaspoon Game (powered by PyGame)'):
 
@@ -43,4 +43,4 @@ EXTENSIONS.update({
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	call(src, "main", [])
+	call(src, "init", [])

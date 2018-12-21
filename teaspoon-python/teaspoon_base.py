@@ -78,7 +78,7 @@ def resolve(line, src, scopeNames, scopeValues):
 		print(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
 		return;
 	elif name == "require":
-		if ''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)]) != VERSION[0]:
+		if not ''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)]) in VERSION:
 			# print(VERSION[0], args[0])
 			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
 			exit(1)
@@ -100,7 +100,7 @@ def resolve(line, src, scopeNames, scopeValues):
 		verbose ('user func {}'.format(name))
 		call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
 
-def call(src, func, args):
+def call(src, func, args, scopeInject=[]):
 
 	verbose('call {} with args {}'.format(func, args))
 
