@@ -1,10 +1,75 @@
 
 
 init :
-require "graphics"
-initWindow 450 300
+	require "graphics"
+	initWindow 450 300
+
+	speedX = 2
+	speedY = 2
+	posX = 225
+	posY = 150
+
+	clk = 255
+ret
+
+physics :
+
+	posX = sum posX speedX
+	posY = sum posY speedY
+
+	ifLess posX 400 skip
+		ifEq posX 400 skip
+			speedX = -speedX
+	skip :
+
+	ifLess posX 50
+		speedX = -speedX
+	end :
+
+	ifLess posY 250 skip
+		ifEq posY 250 skip
+			speedY = -speedY
+	skip :
+
+	ifLess posY 50
+		speedY = -speedY
+	end :
+
+ret
+
+events :
+	ev = getEvent
+	evCode = get ev 0
+	evKey = get ev 1
+
+	% key down
+	ifEq evCode 2
+	% keycode = k
+	ifEq evKey 107
+		clk = 0
+	end :
+
+	% key up
+	ifEq evCode 3
+		% keycode = k
+		ifEq evKey 107
+			clk = 255
+	end :
+
+	% quit event
+	ifEq evCode 12
+		quit
+	end :
+ret
+
+render :
+	drawCircle posX posY 50 255 clk clk
 ret
 
 gameloop :
+
+	physics
+	render
+	events
 
 ret
