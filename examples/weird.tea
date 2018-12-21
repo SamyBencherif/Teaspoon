@@ -1,0 +1,23 @@
+
+main :
+
+x = 5
+y = 3
+
+funk x y :
+
+ifLess y 1 skip
+
+p = sum x 48
+print [p]
+p = sum y 48
+print [p]
+
+x = sum x -1
+y = sum y -1
+
+funk x y
+
+skip :
+
+ret
