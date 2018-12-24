@@ -1,0 +1,23 @@
+
+% When run with teaspoon_graphics scope injection is done automatically between init and update
+
+init :
+	x = 49
+ret
+
+update :
+	print [x]
+ret
+
+% When run with teaspoon_base scope injection is done manually. This is a seperate feature.
+
+"incidentally these kinds of comments work too"
+
+main :
+	y = 68
+	cool $
+ret
+
+cool :
+	print [y]
+ret

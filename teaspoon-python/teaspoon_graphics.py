@@ -43,4 +43,7 @@ EXTENSIONS.update({
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	call(src, "init", [])
+	scopeNames = []
+	scopeValues = []
+	call(src, "init", [], scopeNames, scopeValues)
+	call(src, "update", [], scopeNames, scopeValues)

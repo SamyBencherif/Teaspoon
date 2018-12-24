@@ -66,6 +66,10 @@ def resolve(line, src, scopeNames, scopeValues):
 		else:
 			return int(line)
 
+	if len(scopeNames) != len(set(scopeNames)):
+		# TODO write this info in a log file.
+		raise Exception("Internal Error: Overloaded Scope.")
+
 	if line in scopeNames:
 		return scopeValues[scopeNames.index(line)]
 
@@ -98,11 +102,21 @@ def resolve(line, src, scopeNames, scopeValues):
 	# user defined
 	else:
 		verbose ('user func {}'.format(name))
-		call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
 
-def call(src, func, args, scopeInject=[]):
+		if len(args) and args[0] == "$": # user scope inject
+			verbose ('manual scope injection')
+			call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args[1:]], injectNames=scopeNames, injectValues=scopeValues)
+		else:
+			call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
+
+def call(src, func='main', args=[], injectNames=None, injectValues=None):
+
+	if injectNames == None:
+		injectNames = []
+		injectValues = []
 
 	verbose('call {} with args {}'.format(func, args))
+	verbose('inject {} with values {}'.format(injectNames, injectValues))
 
 	currLine = 0
 
@@ -132,23 +146,28 @@ def call(src, func, args, scopeInject=[]):
 	verbose ('function header {}'.format(srcArr[currLine]))
 	verbose ('arg tokens {}'.format(tokens[1:-1]))
 
-	#TODO: arg and local scope don't need to be seperate
+	localNames = injectNames
+	localValues = injectValues
 
-	# argNames = tokens[1:-1]
-	# argValues = args
+	if len(tokens[1:-1]) > len(args):
+		raise TypeError("Missing arguments")
+	elif len(args) > len(tokens[1:-1]):
+		raise TypeError("Too many arguments")
 
-	localNames = tokens[1:-1]
-	localValues = args
+	localNames += tokens[1:-1]
+	localValues += args
 
 	logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 	# step
 	while currLine < retLoc:
 
-
 		currLine += 1
 
 		tokens = argParse(srcArr[currLine])
+
+		if tokens[-1]==":":
+			logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 		# no execute
 		if len(tokens) == 0 or tokens[0]=="%" or tokens[-1]==":":
@@ -204,4 +223,4 @@ def call(src, func, args, scopeInject=[]):
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	call(src, "main", [])
+	call(src)
