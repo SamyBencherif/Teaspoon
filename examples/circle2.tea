@@ -1,4 +1,7 @@
 init :
+
+	print "First, we initialize game logic."
+
 	require "base"
 	require "graphics"
 	% initWindow 450 300
@@ -12,6 +15,8 @@ init :
 ret
 
 physics :
+
+	print "Next, we make calculations related to physics."
 
 	posX = sum posX speedX
 	posY = sum posY speedY
@@ -37,6 +42,9 @@ physics :
 ret
 
 events :
+
+	print "Also, it's a good idea to handle events."
+
 	% ev = getEvent
 	% evCode = get ev 0
 	% evKey = get ev 1
@@ -64,10 +72,13 @@ events :
 ret
 
 render :
+
+	print "Rendering is the most important part."
+
 	% drawCircle posX posY 50 255 clk clk
 ret
 
-gameloop :
+update :
 
 	physics $
 	render $

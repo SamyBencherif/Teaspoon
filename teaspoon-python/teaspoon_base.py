@@ -79,6 +79,7 @@ def resolve(line, src, scopeNames, scopeValues):
 
 	# builtins
 	if name == "print":
+		verbose('print {}'.format(resolve(args[0], src, scopeNames, scopeValues)))
 		print(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
 		return;
 	elif name == "require":
@@ -105,9 +106,9 @@ def resolve(line, src, scopeNames, scopeValues):
 
 		if len(args) and args[0] == "$": # user scope inject
 			verbose ('manual scope injection')
-			call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args[1:]], injectNames=scopeNames, injectValues=scopeValues)
+			return call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args[1:]], injectNames=scopeNames, injectValues=scopeValues)
 		else:
-			call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
+			return call(src, name, [resolve(arg, src, scopeNames, scopeValues) for arg in args])
 
 def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
@@ -166,7 +167,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
 		tokens = argParse(srcArr[currLine])
 
-		if tokens[-1]==":":
+		if len(tokens) and tokens[-1]==":":
 			logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 		# no execute
@@ -224,3 +225,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
 	call(src)
+
+	# TODO: support -c funcname arg1 arg2 ...
+	# and main args :
+	# print (call(src, 'div', [506, 10]))

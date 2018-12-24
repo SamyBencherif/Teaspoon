@@ -1,0 +1,72 @@
+div x n :
+
+k = 0
+
+while :
+k = sum k 1
+m = mul k n
+ifLess m x while
+
+ifLess x m
+k = sum k -1
+end :
+
+ret k
+
+mod x n :
+
+while :
+
+ifLess 0 x skip
+ifEq 0 x skip
+x = sum x n
+skip :
+
+ifLess x n skip
+x = sum x -n
+skip :
+
+ifLess x 0 while
+ifLess n x while
+ifEq n x while
+
+ret x
+
+reverse arr :
+
+ln = len arr
+k = []
+
+li = ln
+
+while :
+li = sum li -1
+le = get arr li
+add k le
+ifLess 0 li while
+
+ret k
+
+
+toString x :
+r = []
+
+while :
+
+m = mod x 10
+m = sum m 48
+add r m
+
+x = div x 10
+
+ifEq x 0 skip
+ifEq 0 0 while
+skip :
+
+s = reverse r
+ret s
+
+main :
+h = toString 506
+print h
+ret
