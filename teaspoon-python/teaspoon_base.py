@@ -181,16 +181,14 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 	if currLine == len(srcArr):
 		raise NameError("Symbol {} is not defined.".format(func))
 
-	# this was removed because it was stupid
+	for i in range(currLine, len(srcArr)):
+		tokens = argParse(srcArr[i])
+		if len(tokens)==0:
+			pass
+		elif tokens[0] == "ret":
+			break
 
-	# for i in range(currLine, len(srcArr)):
-	# 	tokens = argParse(srcArr[i])
-	# 	if len(tokens)==0:
-	# 		pass
-	# 	elif tokens[0] == "ret":
-	# 		break
-
-	# retLoc =  i
+	retLoc =  i
 
 	tokens = argParse(srcArr[currLine])
 	verbose ('function header {}'.format(srcArr[currLine]))
@@ -210,7 +208,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 	logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 	# step
-	while argParse(srcArr[currLine]) and  argParse(srcArr[currLine])[0] != 'ret':
+	while currLine < retLoc:
 
 		currLine += 1
 
