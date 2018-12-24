@@ -4,25 +4,33 @@ init :
 
 	require "base"
 	require "graphics"
-	% initWindow 450 300
+	initWindow
 
 	speedX = 2
 	speedY = 2
 	posX = 225
 	posY = 150
 
+	rwall = width
+	bwall = height
+	rwall = sum rwall -50
+	bwall = sum bwall -50
+
 	clk = 255
+
+	mx = 0
+	my = 0
 ret
 
 physics :
 
-	print "Next, we make calculations related to physics."
+	% print "Next, we make calculations related to physics."
 
 	posX = sum posX speedX
 	posY = sum posY speedY
 
-	ifLess posX 400 skip
-		ifEq posX 400 skip
+	ifLess posX rwall skip
+		ifEq posX rwall skip
 			speedX = -speedX
 	skip :
 
@@ -30,8 +38,8 @@ physics :
 		speedX = -speedX
 	end :
 
-	ifLess posY 250 skip
-		ifEq posY 250 skip
+	ifLess posY bwall skip
+		ifEq posY bwall skip
 			speedY = -speedY
 	skip :
 
@@ -43,26 +51,35 @@ ret
 
 events :
 
-	print "Also, it's a good idea to handle events."
+	% print "Also, it's a good idea to handle events."
 
-	% ev = getEvent
-	% evCode = get ev 0
-	% evKey = get ev 1
-	evCode = 0
-	evKey = 0
+	ev = getEvent
+	evCode = get ev 0
+	evKey = get ev 1
+	evPos = get ev 3
 
 	% key down
 	ifEq evCode 2
-		% keycode = k
+		% keycode is key_k
 		ifEq evKey 107
 			clk = 0
 	end :
 
 	% key up
 	ifEq evCode 3
-		% keycode = k
+		% keycode is key_k
 		ifEq evKey 107
 			clk = 255
+	end :
+
+	% mouse move
+	ifEq evCode 4
+
+		evPosX = get evPos 0
+		evPosY = get evPos 1
+
+		mx = evPosX
+		my = evPosY
 	end :
 
 	% quit event
@@ -73,9 +90,18 @@ ret
 
 render :
 
-	print "Rendering is the most important part."
+	% print "Rendering is the most important part."
 
-	% drawCircle posX posY 50 255 clk clk
+	clear
+	circle posX posY 50 255 clk clk
+	line 0 0 posX posY 255 255 255 3
+
+	px = sum mx -10
+	py = sum my -10
+
+	%    x  y  w  h  r   g   b
+	rect px py 20 20 217 105 105
+
 ret
 
 update :

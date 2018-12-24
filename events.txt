@@ -1,0 +1,134 @@
+Events are based on SDL
+
+from pygame.locals import *
+
+_evnames = {}                                 # from SDL-1.2.14\include\SDL_events.h
+_evnames[NOEVENT]         = 'NOEVENT'          #  0  SDL_NOEVENT
+_evnames[ACTIVEEVENT]     = 'ACTIVEEVENT'      #  1  SDL_ACTIVEEVENT
+_evnames[KEYDOWN]         = 'KEYDOWN'          #  2  SDL_KEYDOWN
+_evnames[KEYUP]           = 'KEYUP'            #  3  SDL_KEYUP
+_evnames[MOUSEMOTION]     = 'MOUSEMOTION'      #  4  SDL_MOUSEMOTION
+_evnames[MOUSEBUTTONDOWN] = 'MOUSEBUTTONDOWN'  #  5  SDL_MOUSEBUTTONDOWN
+_evnames[MOUSEBUTTONUP]   = 'MOUSEBUTTONUP'    #  6  SDL_MOUSEBUTTONUP
+_evnames[JOYAXISMOTION]   = 'JOYAXISMOTION'    #  7  SDL_JOYAXISMOTION
+_evnames[JOYBALLMOTION]   = 'JOYBALLMOTION'    #  8  SDL_JOYBALLMOTION
+_evnames[JOYHATMOTION]    = 'JOYHATMOTION'     #  9  SDL_JOYHATMOTION
+_evnames[JOYBUTTONDOWN]   = 'JOYBUTTONDOWN'    # 10  SDL_JOYBUTTONDOWN
+_evnames[JOYBUTTONUP]     = 'JOYBUTTONUP'      # 11  SDL_JOYBUTTONUP
+_evnames[QUIT]            = 'QUIT'             # 12  SDL_QUIT
+_evnames[SYSWMEVENT]      = 'SYSWMEVENT'       # 13  SDL_SYSWMEVENT
+                                               # 14  SDL_EVENT_RESERVEDA
+                                               # 15  SDL_EVENT_RESERVEDB
+_evnames[VIDEORESIZE]     = 'VIDEORESIZE'      # 16  SDL_VIDEORESIZE
+_evnames[VIDEOEXPOSE]     = 'VIDEOEXPOSE'      # 17  SDL_VIDEOEXPOSE
+                                               # 18  SDL_EVENT_RESERVED2
+                                               # 19  SDL_EVENT_RESERVED3
+                                               # 20  SDL_EVENT_RESERVED4
+                                               # 21  SDL_EVENT_RESERVED5
+                                               # 22  SDL_EVENT_RESERVED6
+                                               # 23  SDL_EVENT_RESERVED7
+_evnames[USEREVENT]       = 'USEREVENT'        # 24  SDL_USEREVENT
+_evnames[NUMEVENTS]       = 'NUMEVENTS'        # 32  SDL_NUMEVENTS
+
+
+def event_name(evtype):
+    '''return a displayable name for a pygame/SDL event type number'''
+    try:
+        result = _evnames[evtype]
+    except:
+        if evtype in range(USEREVENT,NUMEVENTS):
+            result = 'USEREVENT+' + repr(evtype-USEREVENT)
+        elif evtype >= NUMEVENTS:
+            result = 'ILLEGAL_EVENT_' + repr(evtype)
+        elif evtype == 14:
+            result = 'EVENT_RESERVEDA'
+        elif evtype == 15:
+            result = 'EVENT_RESERVEDB'
+        else:
+            result = 'EVENT_RESERVED' + repr(evtype-16)
+    return result
+
+
+for i in range(0,33):
+    print(repr(i) + ' = ' + event_name(i))
+
+
+# It's all gonna change in SDL 1.3:
+#
+#   SDL_FIRSTEVENT        = 0      # Unused
+#
+#   SDL_QUIT              = 0x100  # User-requested quit
+#
+#   SDL_WINDOWEVENT       = 0x200  # Window state change
+#   SDL_SYSWMEVENT        = 0x201  # System specific event
+#
+#   # Keyboard events
+#   SDL_KEYDOWN           = 0x300  # Key pressed
+#   SDL_KEYUP             = 0x301  # Key released
+#   SDL_TEXTEDITING       = 0x302  # Keyboard text editing (composition)
+#   SDL_TEXTINPUT         = 0x303  # Keyboard text input
+#
+#   # Mouse events
+#   SDL_MOUSEMOTION       = 0x400  # Mouse moved
+#   SDL_MOUSEBUTTONDOWN   = 0x401  # Mouse button pressed
+#   SDL_MOUSEBUTTONUP     = 0x402  # Mouse button released
+#   SDL_MOUSEWHEEL        = 0x403  # Mouse wheel motion
+#
+#   # Tablet or multiple mice input device events
+#   SDL_INPUTMOTION       = 0x500  # Input moved
+#   SDL_INPUTBUTTONDOWN   = 0x501  # Input button pressed
+#   SDL_INPUTBUTTONUP     = 0x502  # Input button released
+#   SDL_INPUTWHEEL        = 0x503  # Input wheel motion
+#   SDL_INPUTPROXIMITYIN  = 0x504  # Input pen entered proximity
+#   SDL_INPUTPROXIMITYOUT = 0x505  # Input pen left proximity
+#
+#   # Joystick events
+#   SDL_JOYAXISMOTION     = 0x600  # Joystick axis motion
+#   SDL_JOYBALLMOTION     = 0x601  # Joystick trackball motion
+#   SDL_JOYHATMOTION      = 0x602  # Joystick hat position change
+#   SDL_JOYBUTTONDOWN     = 0x603  # Joystick button pressed
+#   SDL_JOYBUTTONUP       = 0x604  # Joystick button released
+#
+#   # Touch events
+#   SDL_FINGERDOWN        = 0x700
+#   SDL_FINGERUP          = 0x701
+#   SDL_FINGERMOTION      = 0x702
+#   SDL_TOUCHBUTTONDOWN   = 0x703
+#   SDL_TOUCHBUTTONUP     = 0x704
+#
+#   # Gesture events
+#   SDL_DOLLARGESTURE     = 0x800
+#   SDL_DOLLARRECORD      = 0x801
+#   SDL_MULTIGESTURE      = 0x802
+#
+#   # Clipboard events
+#   SDL_CLIPBOARDUPDATE   = 0x900  # The clipboard changed
+#
+#   # Obsolete events
+#   SDL_EVENT_COMPAT1     =0x7000  # SDL 1.2 events for compatibility
+#   SDL_EVENT_COMPAT2     =0x7001
+#   SDL_EVENT_COMPAT3     =0x7002
+#
+#   # SDL_USEREVENT thru SDL_LASTEVENT are for your use
+#   SDL_USEREVENT         =0x8000
+#   SDL_LASTEVENT         =0xFFFF
+
+
+evType key button pos
+0      1   2      3
+
+QUIT             none
+ACTIVEEVENT      gain, state
+KEYDOWN          unicode, key, mod
+KEYUP            key, mod
+MOUSEMOTION      pos, rel, buttons
+MOUSEBUTTONUP    pos, button
+MOUSEBUTTONDOWN  pos, button
+JOYAXISMOTION    joy, axis, value
+JOYBALLMOTION    joy, ball, rel
+JOYHATMOTION     joy, hat, value
+JOYBUTTONUP      joy, button
+JOYBUTTONDOWN    joy, button
+VIDEORESIZE      size, w, h
+VIDEOEXPOSE      none
+USEREVENT        code

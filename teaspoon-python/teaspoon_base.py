@@ -15,6 +15,20 @@ VERSION = ["base"]
 
 EXTENSIONS = {}
 
+# TODO local variables (for scope injected functions)
+
+# ie
+
+# init :
+# $x = 7
+# x = 5
+# ret
+
+# update :
+# % sees global x, which = 5
+# print x
+# ret
+
 def verbose(info):
 	if VERBOSE:
 		print (info)
@@ -43,8 +57,57 @@ def argParse(line):
 
 	return k
 
+def pystring(k):
+	return ''.join([chr(x) for x in k])
+
+def func_print(args, src, scopeNames, scopeValues):
+	verbose('print {}'.format(resolve(args[0], src, scopeNames, scopeValues)))
+	if type(resolve(args[0], src, scopeNames, scopeValues)) == int:
+		print(resolve(args[0], src, scopeNames, scopeValues))
+	else:
+		print(pystring(resolve(args[0], src, scopeNames, scopeValues))) # process string literal or vars
+	return;
+
+def func_require(args, src, scopeNames, scopeValues):
+	if not pystring(resolve(args[0], src, scopeNames, scopeValues)) in VERSION:
+		# print(VERSION[0], args[0])
+		print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
+		exit(1)
+
+def func_get(args, src, scopeNames, scopeValues):
+	return resolve(args[0], src, scopeNames, scopeValues)[resolve(args[1], src, scopeNames, scopeValues)]
+
+def func_add(args, src, scopeNames, scopeValues):
+	return resolve(args[0], src, scopeNames, scopeValues).append(resolve(args[1], src, scopeNames, scopeValues))
+
+def func_sum(args, src, scopeNames, scopeValues):
+	return sum([resolve(arg, src, scopeNames, scopeValues) for arg in args])
+
+def func_mul(args, src, scopeNames, scopeValues):
+	return resolve(args[0], src, scopeNames, scopeValues) * resolve(args[1], src, scopeNames, scopeValues)
+
+def func_div(args, src, scopeNames, scopeValues):
+	return resolve(args[0], src, scopeNames, scopeValues) // resolve(args[1], src, scopeNames, scopeValues)
+
+def func_len(args, src, scopeNames, scopeValues):
+	return len(resolve(args[0], src, scopeNames, scopeValues))
+
+BUILTINS = {
+"print":func_print,
+"require":func_require,
+"get":func_get,
+"add":func_add,
+"sum":func_sum,
+"mul":func_mul,
+"div":func_div,
+"len":func_len
+}
+
 def resolve(line, src, scopeNames, scopeValues):
 	verbose('resolve {} with scope {} : {}'.format(line, scopeNames, scopeValues))
+
+	if line==".":
+		return None
 
 	if line[0]=='[':
 		k = []
@@ -77,28 +140,12 @@ def resolve(line, src, scopeNames, scopeValues):
 	name = tokens[0]
 	args = tokens[1:]
 
-	# builtins
-	if name == "print":
-		verbose('print {}'.format(resolve(args[0], src, scopeNames, scopeValues)))
-		print(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])) # process string literal or vars
-		return;
-	elif name == "require":
-		if not ''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)]) in VERSION:
-			# print(VERSION[0], args[0])
-			print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
-			exit(1)
-	elif name == "get":
-		return resolve(args[0], src, scopeNames, scopeValues)[resolve(args[1], src, scopeNames, scopeValues)]
-	elif name == "add":
-		return resolve(args[0], src, scopeNames, scopeValues).append(resolve(args[1], src, scopeNames, scopeValues))
-	elif name == "sum":
-		return sum([resolve(arg, src, scopeNames, scopeValues) for arg in args])
-	elif name == "mul":
-		return resolve(args[0], src, scopeNames, scopeValues) * resolve(args[1], src, scopeNames, scopeValues)
-	elif name == "len":
-		return len(resolve(args[0], src, scopeNames, scopeValues))
+	if name in BUILTINS.keys():
+		# builtins can view arguments exactly as typed (as well as by value)
+		return BUILTINS[name](args, src, scopeNames, scopeValues)
 	# extensions
 	elif name in EXTENSIONS.keys():
+		# extensions can only view arguments by value
 		return EXTENSIONS[name](*[resolve(arg, src, scopeNames, scopeValues) for arg in args])
 	# user defined
 	else:
@@ -134,14 +181,16 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 	if currLine == len(srcArr):
 		raise NameError("Symbol {} is not defined.".format(func))
 
-	for i in range(currLine, len(srcArr)):
-		tokens = argParse(srcArr[i])
-		if len(tokens)==0:
-			pass
-		elif tokens[0] == "ret":
-			break
+	# this was removed because it was stupid
 
-	retLoc =  i
+	# for i in range(currLine, len(srcArr)):
+	# 	tokens = argParse(srcArr[i])
+	# 	if len(tokens)==0:
+	# 		pass
+	# 	elif tokens[0] == "ret":
+	# 		break
+
+	# retLoc =  i
 
 	tokens = argParse(srcArr[currLine])
 	verbose ('function header {}'.format(srcArr[currLine]))
@@ -152,8 +201,8 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
 	if len(tokens[1:-1]) > len(args):
 		raise TypeError("Missing arguments")
-	elif len(args) > len(tokens[1:-1]):
-		raise TypeError("Too many arguments")
+	# elif len(args) > len(tokens[1:-1]):
+	# 	raise TypeError("Too many arguments")
 
 	localNames += tokens[1:-1]
 	localValues += args
@@ -161,7 +210,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 	logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 	# step
-	while currLine < retLoc:
+	while argParse(srcArr[currLine]) and  argParse(srcArr[currLine])[0] != 'ret':
 
 		currLine += 1
 
@@ -224,7 +273,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	call(src)
+	call(src, 'main', sys.argv[2:])
 
 	# TODO: support -c funcname arg1 arg2 ...
 	# and main args :
