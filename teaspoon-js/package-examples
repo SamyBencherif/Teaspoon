@@ -1,0 +1,16 @@
+#!/usr/local/bin/python
+
+import os, sys
+
+examplesDir = os.path.dirname(sys.argv[0]) + os.sep + '..' + os.sep + 'examples/'
+
+res = ""
+
+for example in os.listdir(examplesDir):
+
+	name = os.path.basename(example)
+	name = name[:list(name).index(os.path.extsep)]
+
+	res += ('var ' + name + ' = `' + open(examplesDir + os.sep + example).read() + '`\n\n')
+
+open(os.path.dirname(sys.argv[0]) + os.sep + 'examples.js', 'w+t').write(res)

@@ -1,0 +1,23 @@
+
+init :
+initWindow
+ret
+
+update :
+events $
+polygon [10,10,20,10,20,30,10,20] . . . 0
+ret
+
+events :
+
+ev = getEvent
+evCode = get ev 0
+evKey = get ev 1
+evPos = get ev 3
+
+% quit event
+ifEq evCode 12
+quit
+end :
+
+ret

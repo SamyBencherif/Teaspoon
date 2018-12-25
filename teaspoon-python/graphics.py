@@ -1,6 +1,6 @@
 #!/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
 
-from teaspoon_base import *
+from base import *
 import sys, pygame
 
 VERSION.append("graphics")
@@ -68,6 +68,17 @@ def line(x0, y0, x1, y1, r=None, g=None, b=None, width=None):
 		width = 1
 	pygame.draw.line(screen, (r, g, b), (x0, y0), (x1, y1), width)
 
+def polygon(points, r=None, g=None, b=None, width=None):
+	if r==None:
+		r = 255
+	if g==None:
+		g = 255
+	if b==None:
+		b = 255
+	if width==None:
+		width = 0
+	pygame.draw.polygon(screen, (r, g, b), list(zip(points[::2],points[1::2])), width)
+
 def rect(x,y,w,h,r=None,g=None,b=None,width=None):
 	if r==None:
 		r = 255
@@ -94,6 +105,7 @@ EXTENSIONS.update({
 	'circle': circle,
 	'line': line,
 	'rect': rect,
+	'polygon': polygon,
 
 	'getEvent': getEvent,
 	'quit': quit

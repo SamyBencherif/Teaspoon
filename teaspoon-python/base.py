@@ -15,19 +15,9 @@ VERSION = ["base"]
 
 EXTENSIONS = {}
 
-# TODO local variables (for scope injected functions)
+# TODO parenthetical evaluation
 
-# ie
-
-# init :
-# $x = 7
-# x = 5
-# ret
-
-# update :
-# % sees global x, which = 5
-# print x
-# ret
+# sum (sum 4 5) (mul 5)
 
 def verbose(info):
 	if VERBOSE:
@@ -122,7 +112,7 @@ def resolve(line, src, scopeNames, scopeValues):
 		return k
 
 	if line[0] in "-.0123456789":
-		if line[0]=="-" and line[1] != "-.0123456789":
+		if line[0]=="-":
 			return -resolve(line[1:], src, scopeNames, scopeValues)
 		elif '.' in line:
 			return float(line)
