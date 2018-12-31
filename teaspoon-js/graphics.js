@@ -14,6 +14,10 @@ function initWindow(w, h, title) {
 		h = 360;
 	}
 
+	if (title == undefined) {
+		title = 'Teaspoon Game [HTML5]';
+	}
+
 	canvas = document.createElement('canvas');
 	ctx = canvas.getContext('2d');
 	canvas.style.width = w + 'px';
@@ -176,11 +180,6 @@ NEW_EXTENSIONS = {
 for (var ext in NEW_EXTENSIONS) {
 	EXTENSIONS[ext] = NEW_EXTENSIONS[ext];
 }
-
-// initWindow(640, 360, 'nice');
-// clear()
-// circle(width / 2, height / 2, 40)
-// line(0, 0, 100, 100);
 
 var scopeNames = ['width', 'height'];
 var scopeValues = [0, 0];

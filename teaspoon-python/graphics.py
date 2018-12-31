@@ -20,7 +20,7 @@ def initWindow(w=None, h=None, title=None):
 		h = 360
 
 	if title==None:
-		title = 'Teaspoon Game (powered by PyGame)'
+		title = 'Teaspoon Game [Pygame]'
 	else:
 		title = pystring(title)
 

@@ -1,9 +1,7 @@
 
-VERBOSE = 0
-
-VERSION = ["base"]
-
-EXTENSIONS = {}
+var VERBOSE = 0
+var VERSION = ["base"]
+var EXTENSIONS = {}
 
 function verbose(info) {
 	// condition improves performance
@@ -13,7 +11,7 @@ function verbose(info) {
 
 function argParse(line) {
 	if (line.trim() == "")
-		return []; ``
+		return [];
 
 	var k = [];
 	var inQuotes = 0;
@@ -322,39 +320,3 @@ function call(src, func, args, injectNames, injectValues) {
 	}
 
 }
-
-// src = `cat x y :
-// i = 0
-// while :
-// c = get y i
-// add x c
-// i = sum i 1
-// ly = len y
-// ifLess i ly while
-// ret x
-
-// hello a :
-// msg = "hello"
-// % this is a comment
-// cat msg " "
-// cat msg a
-// print msg
-// ret
-
-// main :
-// c = 0
-// while :
-// 	p = sum c 48
-// 	hello [p]
-// 	c = sum c 1
-// 	ifEq c 10 skip
-// ifEq 0 0 while
-
-// skip :
-// ifEq c 10
-// print "That was cool!"
-// end :
-// ret
-// 	`
-
-// call(src)
