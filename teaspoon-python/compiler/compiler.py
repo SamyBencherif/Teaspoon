@@ -155,6 +155,9 @@ def compile(src):
 
 	return res
 
+import subprocess
+
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
 	open('user.c', 'w+t').write(compile(src))
+	subprocess.call("gcc tcl.c", shell=1)

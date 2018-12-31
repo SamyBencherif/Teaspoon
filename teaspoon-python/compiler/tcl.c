@@ -1,4 +1,9 @@
 
+/**
+Teaspoon Compatability Layer
+Samy Bencherif (2018)
+*/
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -154,7 +159,7 @@ Array b_sum(Array a, Array b)
 
 /** User Code */
 
-#include "user.c";
+#include "user.c"
 
 /** End User Code */
 
