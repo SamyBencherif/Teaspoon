@@ -157,4 +157,4 @@ def compile(src):
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
-	print(compile(src))
+	open('user.c', 'w+t').write(compile(src))

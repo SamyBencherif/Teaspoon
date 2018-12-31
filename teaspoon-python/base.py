@@ -29,17 +29,25 @@ def logLine(line, scope):
 			print(BLUE + scope + DEFAULT)
 
 def argParse(line):
-	if line.strip() == "":
+
+	line = line.strip()
+
+	if line == "":
 		return []
 
 	k = []
-	inQuotes = 0
+	captured = 0
 	acc = ""
-	for i in line.strip():
-		if i=='"':
-			inQuotes = ~inQuotes
-		if ~inQuotes and i==" ":
-			k.append(acc)
+	for i in line:
+		if i == '"':
+			captured = ~captured
+		if i in '([':
+			captured -= 1
+		if i in ')]':
+			captured += 1
+		if ~captured and i==" ":
+			if acc:
+				k.append(acc)
 			acc = ""
 		else:
 			acc += i
@@ -173,12 +181,10 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
 	for i in range(currLine, len(srcArr)):
 		tokens = argParse(srcArr[i])
-		if len(tokens)==0:
-			pass
-		elif tokens[0] == "ret":
+		if len(tokens)>1 and tokens[0] == "end" and tokens[-1] == "function":
 			break
 
-	retLoc =  i
+	endLoc =  i
 
 	tokens = argParse(srcArr[currLine])
 	verbose ('function header {}'.format(srcArr[currLine]))
@@ -198,7 +204,7 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 	logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 
 	# step
-	while currLine < retLoc:
+	while currLine < endLoc:
 
 		currLine += 1
 
@@ -209,6 +215,8 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 
 		# no execute
 		if len(tokens) == 0 or tokens[0]=="%" or tokens[-1]==":":
+			continue
+		if len(tokens)>1 and tokens[0] == "end" and tokens[-1] == "function":
 			continue
 		logLine(srcArr[currLine], str(list(zip(localNames, localValues))))
 

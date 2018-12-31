@@ -154,18 +154,15 @@ Array b_sum(Array a, Array b)
 
 /** User Code */
 
+#include "user.c";
 
 /** End User Code */
 
 int main(void)
 {
-  // while (true)
-  // {
 
   int pool_restore = pool.size;  // expected to be 0.
   u_main();
   reset_pool(NULL, pool_restore);
-
-  // }
 
 }
