@@ -175,6 +175,12 @@ import subprocess
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
+	outDir = os.getcwd()
 	os.chdir(os.path.dirname(sys.argv[0]))
 	open('user.c', 'w+t').write(compile(src))
-	subprocess.call("gcc base.c", shell=1)
+
+	if len(sys.argv) < 4 or sys.argv[2] != '-o': # cheap parlor tricks, switch to argparse module
+		out = 'a.out'
+	else:
+		out = sys.argv[3]
+	subprocess.call("gcc base.c -o " + outDir + os.sep + out, shell=1)

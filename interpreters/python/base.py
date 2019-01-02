@@ -289,5 +289,3 @@ if __name__ == "__main__":
 	call(src, 'main', sys.argv[2:])
 
 	# TODO: support -c funcname arg1 arg2 ...
-	# and main args :
-	# print (call(src, 'div', [506, 10]))

@@ -1,3 +1,4 @@
+#!/usr/local/bin/node
 
 var VERBOSE = 0
 var VERSION = ["base"]
@@ -318,5 +319,26 @@ function call(src, func, args, injectNames, injectValues) {
 			resolve(srcArr[currLine], src, localNames, localValues);
 		}
 	}
+
+}
+
+if (typeof window === 'undefined') {
+
+	const fs = require('fs');
+
+	// fs.open(process.argv[1], 'r', (err, fd) => {
+	// 	if (err) throw err;
+	// 	fs.close(fd, (err) => {
+	// 		if (err) throw err;
+
+	// 		console.log(fd);
+
+	// 	});
+	// });
+
+	fs.readFile(process.argv[2], 'utf8', (err, src) => {
+		if (err) throw err;
+		call(src, "main")
+	});
 
 }
