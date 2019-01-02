@@ -115,6 +115,9 @@ def resolve(line, src, scopeNames, scopeValues):
 	if line==".":
 		return None
 
+	if line[0]=='(':
+		return resolve(line[1:-1], src)
+
 	if line[0]=='[':
 		k = []
 		for i in argParse(line[1:-1].replace(', ', ' ').replace(',', ' ')):

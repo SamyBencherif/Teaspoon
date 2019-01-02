@@ -1,5 +1,12 @@
 #!/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
 
+"""
+compiler.py is missing the following base.py features
+
+scope injection: $
+default values: .
+"""
+
 import os, sys
 
 VERSION = ["base"]
@@ -107,7 +114,7 @@ def compile(src):
 	res = ""
 	indent = 0
 
-	localNames = []
+	definedFunctions = []
 
 	ret_index = 0
 
@@ -125,16 +132,16 @@ def compile(src):
 			res += "  "*indent + "\nArray u_{}({}) {{\n".format(tokens[0], ', '.join(['Array ' + x for x in tokens[1:-1]]))
 			indent += 1
 			res += "  "*indent + "int pool_restore = pool.size;\n\n"
-			localNames = []
+			definedFunctions = []
 
 		# assignment
 		elif len(tokens) >= 2 and tokens[1] == "=":
 			value = ' '.join(tokens[2:])
-			if resolve(tokens[0], srcArr) in localNames:
+			if resolve(tokens[0], srcArr) in definedFunctions:
 				res += "  "*indent + "{}={};\n".format(resolve(tokens[0], srcArr), resolve(value, srcArr))
 			else:
 				res += "  "*indent + "Array {}={};\n".format(resolve(tokens[0], srcArr), resolve(value, srcArr))
-				localNames.append(resolve(tokens[0], srcArr))
+				definedFunctions.append(resolve(tokens[0], srcArr))
 
 		# returns
 		elif tokens[0] == "ret":

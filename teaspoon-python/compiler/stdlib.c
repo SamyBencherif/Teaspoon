@@ -44,7 +44,7 @@ Array b_push(Array* arr, Array v)
 	for (int i=0; i<v.len; i++)
 		new_arr.get[arr->len+i] = v.get[i];
 
-	arr = &new_arr;
+	*arr = new_arr;
 
 	return new_array(0, (float[]){});
 }

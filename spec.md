@@ -52,6 +52,10 @@ Additionally, expressions wrapped in parenthesis can be arguments.
 print (noop (noop "b"))
 ```
 
+### Expressions
+
+As shown above, parenthesis can be used to group a call with arguments into a single expression. This is useful when attempting to use a value returned from a function as an argument without creating a new variable every time.
+
 ### Assignment
 ```
 x = "a"
