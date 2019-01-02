@@ -46,7 +46,7 @@ Array b_push(Array* arr, Array v)
 
 	*arr = new_arr;
 
-	return new_array(0, (float[]){});
+	return new_arr;
 }
 
 Array b_get(Array arr, Array i)

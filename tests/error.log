@@ -1,0 +1,134 @@
+Symbol less is not defined.
+Symbol while is not defined.
+Symbol while is not defined.
+Symbol end is not defined.
+Symbol function is not defined.
+Symbol end is not defined.
+/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14
+	if (line.trim() == "")
+	         ^
+
+TypeError: Cannot read property 'trim' of undefined
+    at argParse (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14:11)
+    at call (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:248:12)
+    at fs.readFile (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:341:3)
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+Traceback (most recent call last):
+  File "/Users/samybencherif/Documents/Projects/teaspoon/tests/../interpreters/python/base.py", line 289, in <module>
+    call(src, 'main', sys.argv[2:])
+  File "/Users/samybencherif/Documents/Projects/teaspoon/tests/../interpreters/python/base.py", line 285, in call
+    resolve(srcArr[currLine], src, localNames, localValues)
+  File "/Users/samybencherif/Documents/Projects/teaspoon/tests/../interpreters/python/base.py", line 155, in resolve
+    return BUILTINS[name](*[resolve(arg, src, scopeNames, scopeValues) for arg in args])
+  File "/Users/samybencherif/Documents/Projects/teaspoon/tests/../interpreters/python/base.py", line 155, in <listcomp>
+    return BUILTINS[name](*[resolve(arg, src, scopeNames, scopeValues) for arg in args])
+  File "/Users/samybencherif/Documents/Projects/teaspoon/tests/../interpreters/python/base.py", line 119, in resolve
+    return resolve(line[1:-1], src)
+TypeError: resolve() missing 2 required positional arguments: 'scopeNames' and 'scopeValues'
+Symbol less is not defined.
+Symbol while is not defined.
+Symbol (hello is not defined.
+Symbol (hello is not defined.
+Symbol (hello is not defined.
+/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:61
+	return k.map(x => String.fromCharCode(x)).join('')
+	         ^
+
+TypeError: Cannot read property 'map' of undefined
+    at jsString (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:61:11)
+    at Object.func_print [as print] (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:69:15)
+    at resolve (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:174:24)
+    at call (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:319:4)
+    at fs.readFile (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:341:3)
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+In file included from base.c:147:
+./user.c:41:48: error: use of undeclared identifier 'v_m'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                               ^
+./user.c:41:90: error: expected '}'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                                                         ^
+./user.c:41:87: note: to match this '{'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                                                      ^
+./user.c:41:54: error: use of undeclared identifier 'v_mu'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                     ^
+./user.c:41:120: error: expected '}'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                                                                                       ^
+./user.c:41:117: note: to match this '{'
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                                                                                    ^
+./user.c:41:123: error: expected expression
+    b_print(b_sum(new_array(1, (float[]){65}), v_m), v_mu, v_x, new_array(1, (float[]){10)}), new_array(1, (float[]){26))}));
+                                                                                                                          ^
+./user.c:42:5: error: use of undeclared identifier 'v_'
+    v_          print("\n");
+    ^
+./user.c:43:20: error: too many arguments to function call, expected single argument 'arr', have 2 arguments
+    v_x=b_sum(v_x, new_array(1, (float[]){1}));
+        ~~~~~      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+./stdlib.c:12:1: note: 'b_sum' declared here
+Array b_sum(Array arr)
+^
+In file included from base.c:147:
+./user.c:46:17: error: initializer element is not a compile-time constant
+  Array ret_4 = new_array(0, (float[]){});
+                ^~~~~~~~~~~~~~~~~~~~~~~~~
+./user.c:47:14: error: unknown type name 'ret_4'
+  reset_pool(ret_4.get, pool_restore);
+             ^
+./user.c:47:19: error: expected ')'
+  reset_pool(ret_4.get, pool_restore);
+                  ^
+./user.c:47:13: note: to match this '('
+  reset_pool(ret_4.get, pool_restore);
+            ^
+./user.c:47:3: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
+  reset_pool(ret_4.get, pool_restore);
+  ^
+./user.c:48:3: error: expected identifier or '('
+  return ret_4;
+  ^
+./user.c:49:1: error: extraneous closing brace ('}')
+}
+^
+1 warning and 12 errors generated.
+Symbol eq is not defined.
+Symbol if is not defined.
+Symbol if is not defined.
+Symbol end is not defined.
+Symbol eq is not defined.
+Symbol if is not defined.
+Symbol if is not defined.
+Symbol end is not defined.
+Symbol function is not defined.
+Symbol end is not defined.
+/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14
+	if (line.trim() == "")
+	         ^
+
+TypeError: Cannot read property 'trim' of undefined
+    at argParse (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14:11)
+    at call (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:248:12)
+    at fs.readFile (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:341:3)
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+Symbol push is not defined.
+Symbol push is not defined.
+Symbol function is not defined.
+Symbol end is not defined.
+/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14
+	if (line.trim() == "")
+	         ^
+
+TypeError: Cannot read property 'trim' of undefined
+    at argParse (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:14:11)
+    at call (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:248:12)
+    at fs.readFile (/Users/samybencherif/Documents/Projects/teaspoon/interpreters/javascript/base.js:341:3)
+    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)
+--- incorrect program output (Interpreted in NodeJS) ---
+reported `Hello, World\n
+`
+expected `Hello, World
+`

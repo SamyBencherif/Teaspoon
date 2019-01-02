@@ -30,7 +30,7 @@ def argParse(line):
 			captured -= 1
 		if i in ')]':
 			captured += 1
-		if ~captured and i==" ":
+		if not captured and i==" ":
 			if acc:
 				k.append(acc)
 			acc = ""
@@ -62,7 +62,7 @@ def resolve(line, src, preserveNum=False):
 		k = []
 		for i in bytes(line[1:-1], 'utf-8').decode('unicode_escape'):
 			k.append(ord(i))
-		k.append(0)
+		# k.append(0)
 		return resolve(str(k), src)
 
 	if line[0] in "-.0123456789":
@@ -85,12 +85,19 @@ def resolve(line, src, preserveNum=False):
 	# builtins
 	if name in builtins:
 		if name == "push":
-			return "b_{}(&{})".format(name, ', '.join([resolve(x, src) for x in args]))
+			if preserveNum:
+				return "b_{}(&{}).get[0]".format(name, ', '.join([resolve(x, src) for x in args]))
+			else:
+				return "b_{}(&{})".format(name, ', '.join([resolve(x, src) for x in args]))
 		else:
 			return "b_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
 	# user func
 	elif u_func_exists(name, src):
-		return "u_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
+		if preserveNum:
+			return "u_{}({}).get[0]".format(name, ', '.join([resolve(x, src) for x in args]))
+		else:
+			return "u_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
+
 	# variable
 	elif len(line.split()) == 1:
 		if preserveNum:
@@ -181,6 +188,10 @@ if __name__ == "__main__":
 
 	if len(sys.argv) < 4 or sys.argv[2] != '-o': # cheap parlor tricks, switch to argparse module
 		out = 'a.out'
+		exit(subprocess.call("gcc base.c -o " + outDir + os.sep + out, shell=1))
 	else:
 		out = sys.argv[3]
-	subprocess.call("gcc base.c -o " + outDir + os.sep + out, shell=1)
+		if (out[0] == '/'):
+			exit(subprocess.call("gcc base.c -o " + out, shell=1))
+		else:
+			exit(subprocess.call("gcc base.c -o " + outDir + os.sep + out, shell=1))
