@@ -71,17 +71,25 @@ def resolve(line, src, preserveNum=False):
 	name = tokens[0]
 	args = tokens[1:]
 
-	builtins = ['print', 'less', 'sum']
+	#																		| an extension
+	#																		v
+	builtins = ['less', 'eq', 'sum', 'mul', 'div', 'push', 'get', 'len'] + ['print']
 
 	# builtins
 	if name in builtins:
-		return "b_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
+		if name == "push":
+			return "b_{}(&{})".format(name, ', '.join([resolve(x, src) for x in args]))
+		else:
+			return "b_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
 	# user func
 	elif u_func_exists(name, src):
 		return "u_{}({})".format(name, ', '.join([resolve(x, src) for x in args]))
 	# variable
 	elif len(line.split()) == 1:
-		return 'v_'+line
+		if preserveNum:
+			return 'v_'+line+'.get[0]'
+		else:
+			return 'v_'+line
 	else:
 		raise Exception("Undefined function: {}".format(line.split()[0]))
 
@@ -117,11 +125,12 @@ def compile(src):
 			res += "  "*indent + "\nArray u_{}({}) {{\n".format(tokens[0], ', '.join(['Array ' + x for x in tokens[1:-1]]))
 			indent += 1
 			res += "  "*indent + "int pool_restore = pool.size;\n\n"
+			localNames = []
 
 		# assignment
 		elif len(tokens) >= 2 and tokens[1] == "=":
 			value = ' '.join(tokens[2:])
-			if tokens[0] in localNames:
+			if resolve(tokens[0], srcArr) in localNames:
 				res += "  "*indent + "{}={};\n".format(resolve(tokens[0], srcArr), resolve(value, srcArr))
 			else:
 				res += "  "*indent + "Array {}={};\n".format(resolve(tokens[0], srcArr), resolve(value, srcArr))
@@ -139,7 +148,7 @@ def compile(src):
 
 		# control structures
 		elif tokens[0] == "if" or tokens[0] == "while":
-			res += "  "*indent + "{}({}){{\n".format(tokens[0], resolve(' '.join(tokens[1:]), srcArr))
+			res += "  "*indent + "{}({}.get[0]){{\n".format(tokens[0], resolve(' '.join(tokens[1:]), srcArr))
 			indent += 1
 		elif tokens[0] == "end":
 			if tokens[-1] == "function":
@@ -159,5 +168,6 @@ import subprocess
 
 if __name__ == "__main__":
 	src = open(sys.argv[1], 'r+t').read()
+	os.chdir(os.path.dirname(sys.argv[0]))
 	open('user.c', 'w+t').write(compile(src))
-	subprocess.call("gcc tcl.c", shell=1)
+	subprocess.call("gcc base.c", shell=1)

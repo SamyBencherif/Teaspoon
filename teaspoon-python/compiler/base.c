@@ -102,7 +102,7 @@ void reset_pool(float* excludes, int pool_restore)
 {
   Array tmp;
   bool wasExclude = false; //deletion of last element is skipped without comparison.
-  while (pool.size > pool_restore+1) //save one variable to return
+  while (pool.size > pool_restore) //save one variable to return
   {
     if (pool.head->data.get != excludes)
     {
@@ -137,30 +137,14 @@ Array new_array(int l, float* v)
   return o;
 }
 
-void b_print(Array v)
-{
-	int i=0;
-	while (i < v.len)
-	{
-		printf("%c", (char)v.get[i]);
-		i++;
-	}
-}
+/** Standard Library */
+#include "stdlib.c"
+/** End Standard Library */
 
-bool b_less(Array a, Array b)
-{
-	return a.get[0] < b.get[0];
-}
-
-Array b_sum(Array a, Array b)
-{
-	return new_array(1, (float[]){a.get[0]+b.get[0]});
-}
+#include "extensions.c"
 
 /** User Code */
-
 #include "user.c"
-
 /** End User Code */
 
 int main(void)
@@ -170,4 +154,9 @@ int main(void)
   u_main();
   reset_pool(NULL, pool_restore);
 
+  if (pool.size > 0)
+  {
+    printf("Memory Leak Detected. %i unresolved objects. \n", pool.size);
+  }
+  return pool.size;
 }

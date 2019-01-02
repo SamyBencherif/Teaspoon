@@ -1,0 +1,20 @@
+
+Teaspoon Byte Code Plan
+
+[Assign][Variable Identifier][...Value...]
+
+[Call][ArgCount]
+arg1: [Value]
+arg2: [Value]
+...
+[Function Address]
+
+[Array][Size][...Values...]
+
+[While][...expression...][...code...][end address]
+
+
+[Assign][r][Array][4][7][7][7][7]
+[Assign][x][Array][1][0]
+[While][Call][2][variable][x][5][less]
+[Call][print][1]

@@ -15,9 +15,8 @@ VERSION = ["base"]
 
 EXTENSIONS = {}
 
-# TODO parenthetical evaluation
-
-# sum (sum 4 5) (mul 5)
+# TODO
+# if and while
 
 def verbose(info):
 	if VERBOSE:
@@ -58,45 +57,54 @@ def argParse(line):
 def pystring(k):
 	return ''.join([chr(x) for x in k])
 
-def func_print(args, src, scopeNames, scopeValues):
-	verbose('print {}'.format(resolve(args[0], src, scopeNames, scopeValues)))
-	if type(resolve(args[0], src, scopeNames, scopeValues)) == int:
-		print(resolve(args[0], src, scopeNames, scopeValues))
-	else:
-		print(pystring(resolve(args[0], src, scopeNames, scopeValues))) # process string literal or vars
+def func_print(msg):
+	verbose('print {}'.format(msg))
+	sys.stdout.write(pystring(msg)) # convert charcodes to string
 	return;
 
-def func_require(args, src, scopeNames, scopeValues):
-	if not pystring(resolve(args[0], src, scopeNames, scopeValues)) in VERSION:
-		# print(VERSION[0], args[0])
-		print('This program is not compatible with this version of Teaspoon. It requires teaspoon_{}.'.format(''.join([chr(x) for x in resolve(args[0], src, scopeNames, scopeValues)])))
-		exit(1)
+def func_get(arr, i):
+	return arr[int(i[0])]
 
-def func_get(args, src, scopeNames, scopeValues):
-	return resolve(args[0], src, scopeNames, scopeValues)[resolve(args[1], src, scopeNames, scopeValues)]
+def func_push(a, b):
+	a += b
+	pass
 
-def func_add(args, src, scopeNames, scopeValues):
-	return resolve(args[0], src, scopeNames, scopeValues).append(resolve(args[1], src, scopeNames, scopeValues))
+def func_less(a,b):
+	return [int(a < b)]
 
-def func_sum(args, src, scopeNames, scopeValues):
-	return sum([resolve(arg, src, scopeNames, scopeValues) for arg in args])
+def func_eq(a,b):
+	return [int(a == b)]
 
-def func_mul(args, src, scopeNames, scopeValues):
-	return resolve(args[0], src, scopeNames, scopeValues) * resolve(args[1], src, scopeNames, scopeValues)
+def func_sum(args):
+	return [sum([x[0] for x in args])]
 
-def func_div(args, src, scopeNames, scopeValues):
-	return resolve(args[0], src, scopeNames, scopeValues) // resolve(args[1], src, scopeNames, scopeValues)
+def func_mul(args):
+	res = 1
+	for x in args[0]:
+		res *= x
+	return [res]
 
-def func_len(args, src, scopeNames, scopeValues):
-	return len(resolve(args[0], src, scopeNames, scopeValues))
+def func_div(args):
+	res = 1
+	for x in args[0]:
+		res /= x
+	return [res]
+
+def func_mod(a, b):
+	return [a % b]
+
+def func_len(args):
+	return [len(args)]
 
 BUILTINS = {
 "print":func_print,
-"require":func_require,
 "get":func_get,
-"add":func_add,
+"less":func_less,
+"eq":func_eq,
+"push":func_push,
 "sum":func_sum,
 "mul":func_mul,
+"mod":func_mod,
 "div":func_div,
 "len":func_len
 }
@@ -115,17 +123,17 @@ def resolve(line, src, scopeNames, scopeValues):
 
 	if line[0]=='"':
 		k = []
-		for i in line[1:-1]:
+		for i in bytes(line[1:-1], 'utf-8').decode('unicode-escape'):
 			k.append(ord(i))
 		return k
 
 	if line[0] in "-.0123456789":
 		if line[0]=="-":
 			return -resolve(line[1:], src, scopeNames, scopeValues)
-		elif '.' in line:
-			return float(line)
+		# elif '.' in line:
+			# return float(line)
 		else:
-			return int(line)
+			return [int(line)]
 
 	if len(scopeNames) != len(set(scopeNames)):
 		# TODO write this info in a log file.
@@ -140,7 +148,8 @@ def resolve(line, src, scopeNames, scopeValues):
 
 	if name in BUILTINS.keys():
 		# builtins can view arguments exactly as typed (as well as by value)
-		return BUILTINS[name](args, src, scopeNames, scopeValues)
+		# arguments as typed is no longer used
+		return BUILTINS[name](*[resolve(arg, src, scopeNames, scopeValues) for arg in args])
 	# extensions
 	elif name in EXTENSIONS.keys():
 		# extensions can only view arguments by value
@@ -241,27 +250,32 @@ def call(src, func='main', args=[], injectNames=None, injectValues=None):
 				return resolve(tokens[1], src, localNames, localValues)
 
 		# control structures
-		elif tokens[0] == "ifEq":
-			args = tokens[1:]
+		elif tokens[0] in ("if", "while"):
+			cnd = ' '.join(tokens[1:])
 
-			if len(args) == 2:
-				dest = "end"
-			else:
-				dest = args[2]
-			if (dest=="end") ^ (resolve(args[0], src, localNames, localValues) == resolve(args[1], src, localNames, localValues)):
-				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
-					currLine += -1 if dest=="while" else 1
+			if not resolve(cnd, src, localNames, localValues)[0]:
+				block_depth = 0
+				while len(tokens) == 0 or block_depth != 0 or tokens[0] != 'end':
+					tokens = argParse(srcArr[currLine])
+					if tokens and tokens[0] in ("if", "while"):
+						block_depth += 1
+					if tokens and tokens[0] == "end":
+						block_depth -= 1
+					currLine += 1
+				currLine += 1 # go past "end" line
 
-		elif tokens[0] == "ifLess":
-			args = tokens[1:]
 
-			if len(args) == 2:
-				dest = "end"
-			else:
-				dest = args[2]
-			if (dest=="end") ^ (resolve(args[0], src, localNames, localValues) < resolve(args[1], src, localNames, localValues)):
-				while len(argParse(srcArr[currLine])) == 0 or argParse(srcArr[currLine])[0] != dest:
-					currLine += -1 if dest=="while" else 1
+		elif tokens[0] == "end":
+			if tokens[-1] == "while":
+				block_depth = 0
+				while len(tokens) == 0 or block_depth != 0 or tokens[0] != 'while':
+					tokens = argParse(srcArr[currLine])
+					if tokens and tokens[0] in ("if", "while"):
+						block_depth -= 1
+					if tokens and tokens[0] == "end":
+						block_depth += 1
+					currLine -= 1
+
 
 		else: # arbitrary function call
 			verbose("root function call {{{}}}".format(srcArr[currLine]))
